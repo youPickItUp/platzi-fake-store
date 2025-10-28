@@ -1,8 +1,9 @@
 import "./App.css";
-import router from "./router";
+import router, { routerConfig } from "./router";
 import { match } from "ts-pattern";
 import { lazy, Suspense } from "react";
 import { Link } from "@swan-io/chicane";
+import { objectKeys } from "tsafe";
 
 const LazyProducts = lazy(() => import("./routes/Products"));
 const LazyProduct = lazy(() => import("./routes/Product"));
@@ -10,7 +11,7 @@ const LazyAddProduct = lazy(() => import("./routes/AddProduct"));
 const LazyNotFound = lazy(() => import("./routes/NotFound"));
 
 function App() {
-  const route = router.useRoute(["Products", "Product", "AddProduct"]);
+  const route = router.useRoute(objectKeys(routerConfig));
 
   return (
     <>

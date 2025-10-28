@@ -1,9 +1,11 @@
 import { createRouter } from "@swan-io/chicane";
 
-const router = createRouter({
+export const routerConfig = {
   Products: "/",
   AddProduct: "/products/new",
   Product: "/products/:id",
-});
+} as const;
+
+const router = createRouter(routerConfig);
 
 export default router;
