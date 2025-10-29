@@ -7,6 +7,8 @@ const categorySchema = z.object({
   image: z.url(),
 });
 
+export const categoriesSchema = z.array(categorySchema);
+
 export const productSchema = z.object({
   id: z.number(),
   title: z.string(),
