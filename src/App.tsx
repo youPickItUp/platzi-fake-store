@@ -24,7 +24,7 @@ function App() {
         ))
         .with({ name: "Product" }, () => (
           <Suspense>
-            <LazyProduct />
+            <LazyProduct id={123} />
           </Suspense>
         ))
         .with({ name: "AddProduct" }, () => (

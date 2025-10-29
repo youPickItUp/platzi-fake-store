@@ -7,7 +7,7 @@ const categorySchema = z.object({
   image: z.url(),
 });
 
-const productSchema = z.object({
+export const productSchema = z.object({
   id: z.number(),
   title: z.string(),
   slug: z.string(),
@@ -17,6 +17,4 @@ const productSchema = z.object({
   images: z.array(z.url()),
 });
 
-const productsSchema = z.array(productSchema);
-
-export default productsSchema;
+export const productsSchema = z.array(productSchema);
