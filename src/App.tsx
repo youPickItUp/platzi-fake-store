@@ -1,20 +1,21 @@
 import "./App.css";
-import router, { routerConfig } from "./router";
+import router, { routesNames } from "./router";
 import { match } from "ts-pattern";
 import { lazy, Suspense } from "react";
 import { Link } from "@swan-io/chicane";
-import { objectKeys } from "tsafe";
+import { QueryClientProvider } from "@tanstack/react-query";
+import queryClient from "./queryClient";
 
-const LazyProducts = lazy(() => import("./routes/Products"));
-const LazyProduct = lazy(() => import("./routes/Product"));
-const LazyAddProduct = lazy(() => import("./routes/AddProduct"));
-const LazyNotFound = lazy(() => import("./routes/NotFound"));
+const LazyProducts = lazy(() => import("./views/Products"));
+const LazyProduct = lazy(() => import("./views/Product"));
+const LazyAddProduct = lazy(() => import("./views/AddProduct"));
+const LazyNotFound = lazy(() => import("./views/NotFound"));
 
 function App() {
-  const route = router.useRoute(objectKeys(routerConfig));
+  const route = router.useRoute(routesNames);
 
   return (
-    <>
+    <QueryClientProvider client={queryClient}>
       {match(route)
         .with({ name: "Products" }, () => (
           <Suspense>
@@ -40,7 +41,7 @@ function App() {
       <Link to={router.Product({ id: "123" })}>Product</Link>
       <Link to={router.AddProduct()}>Add product</Link>
       <Link to="some random url/ala ma kota">Not found</Link>
-    </>
+    </QueryClientProvider>
   );
 }
 
