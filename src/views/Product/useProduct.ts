@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import productsApi from "../../axios";
 import { productSchema } from "../../apiSchemas";
 
-const useProduct = (id: number) => {
+const useProduct = (id: string) => {
   return useQuery({
     queryKey: ["product", id],
     queryFn: async () => {

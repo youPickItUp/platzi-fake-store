@@ -1,6 +1,8 @@
 import { useForm } from "@tanstack/react-form";
-import useAddProduct from "./useAddProduct";
+import useEditProduct from "./useEditProduct";
 import useCategories from "./useCategories";
+import useProduct from "../Product/useProduct";
+import { objectEntries, objectFromEntries } from "tsafe";
 import z from "zod";
 
 const coerceToNumberExceptEmptyString = z.preprocess(
@@ -10,32 +12,39 @@ const coerceToNumberExceptEmptyString = z.preprocess(
 );
 
 const productInputSchema = z.object({
-  title: z.string().nonempty(),
-  price: coerceToNumberExceptEmptyString,
-  description: z.string().nonempty(),
-  images: z.array(z.url()).nonempty(),
-  categoryId: coerceToNumberExceptEmptyString,
+  title: z.string().nonempty().optional(),
+  price: coerceToNumberExceptEmptyString.optional(),
+  description: z.string().nonempty().optional(),
+  images: z.array(z.url()).nonempty().optional(),
+  categoryId: coerceToNumberExceptEmptyString.optional(),
 });
 
-const AddProduct = () => {
-  const categories = useCategories();
-  const addProduct = useAddProduct();
+const EditProduct = ({ id }: { id: string }) => {
+  const categoriesQuery = useCategories();
+  const editProductMutation = useEditProduct(id);
+  const productQuery = useProduct(id);
+
   const form = useForm({
     defaultValues: {
-      title: "",
-      price: "",
-      description: "",
-      images: [""],
-      categoryId: "",
+      title: productQuery.data?.title ?? "",
+      price: productQuery.data?.price?.toString() ?? "",
+      description: productQuery.data?.description ?? "",
+      images: productQuery.data?.images ?? [],
+      categoryId: productQuery.data?.category.id.toString() ?? "",
     },
-    onSubmit: async ({ value }) => {
-      const data = productInputSchema.parse(value);
-      await addProduct.mutateAsync(data);
+    onSubmit: async ({ value, formApi }) => {
+      const fieldMeta = formApi.state.fieldMeta;
+      const nonDefaultValues = objectFromEntries(
+        objectEntries(value).filter(([key]) => !fieldMeta[key].isDefaultValue)
+      );
+      const data = productInputSchema.parse(nonDefaultValues);
+      await editProductMutation.mutateAsync(data);
     },
   });
 
   return (
     <form
+      key={productQuery.data?.id ?? "loading/not found"}
       onSubmit={(e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -43,7 +52,7 @@ const AddProduct = () => {
       }}
     >
       <div>
-        <div>AddProduct</div>
+        <div>Edit Product</div>
         <form.Field name="title">
           {(field) => (
             <>
@@ -124,7 +133,7 @@ const AddProduct = () => {
                 onChange={(e) => field.handleChange(e.target.value)}
               >
                 <option value=""></option>
-                {categories.data?.map(({ id, name }) => (
+                {categoriesQuery.data?.map(({ id, name }) => (
                   <option value={id}>{name}</option>
                 ))}
               </select>
@@ -141,4 +150,4 @@ const AddProduct = () => {
   );
 };
 
-export default AddProduct;
+export default EditProduct;

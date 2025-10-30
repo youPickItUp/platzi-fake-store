@@ -1,6 +1,6 @@
 import useProduct from "./useProduct";
 
-const Product = ({ id }: { id: number }) => {
+const Product = ({ id }: { id: string }) => {
   const { data: product } = useProduct(id);
   return <div>Product {product?.title}</div>;
 };
