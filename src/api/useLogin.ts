@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import fakeStoreApi from "./fakeStoreApi";
 import z from "zod";
 import axios from "axios";
-import router from "../router";
+import { useLocation } from "wouter";
 
 const tokensSchema = z
   .object({
@@ -15,6 +15,8 @@ const tokensSchema = z
   }));
 
 const useLogin = () => {
+  const [, navigate] = useLocation();
+
   return useMutation({
     mutationFn: async (data: { email: string; password: string }) => {
       const response = await fakeStoreApi.post("/auth/login", data);
@@ -22,7 +24,7 @@ const useLogin = () => {
     },
     onSuccess: ({ accessToken }) => {
       axios.defaults.headers.common[`Authorization`] = `Bearer ${accessToken}`;
-      router.replace("products");
+      navigate("/");
     },
   });
 };
