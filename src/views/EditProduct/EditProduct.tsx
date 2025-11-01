@@ -44,7 +44,6 @@ const EditProduct = ({ id }: { id: string }) => {
 
   return (
     <form
-      key={productQuery.data?.id ?? "loading/not found"}
       onSubmit={(e) => {
         e.preventDefault();
         e.stopPropagation();

@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import productsApi from "../../axios";
+import fakeStoreApi from "../../fakeStoreApi";
 import { productsSchema } from "../../apiSchemas";
 
 const useProducts = () => {
   return useQuery({
     queryKey: ["products"],
     queryFn: async () => {
-      const { data } = await productsApi.get("/products");
+      const { data } = await fakeStoreApi.get("/products");
       return productsSchema.parse(data);
     },
   });

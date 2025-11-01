@@ -1,10 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
-import productsApi from "../../axios";
+import fakeStoreApi from "../../fakeStoreApi";
 
 const useAddProduct = () => {
   return useMutation({
     mutationFn: async (data: unknown) => {
-      await productsApi.post("/products/", data);
+      await fakeStoreApi.post("/products/", data);
     },
   });
 };

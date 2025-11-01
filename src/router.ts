@@ -2,10 +2,11 @@ import { createRouter } from "@swan-io/chicane";
 import { objectKeys } from "tsafe";
 
 const routerConfig = {
-  Products: "/",
-  AddProduct: "/products/new",
-  Product: "/products/:id",
-  EditProduct: "/products/:id/edit",
+  products: "/",
+  login: "/login",
+  addProduct: "/products/new",
+  product: "/products/:id",
+  editProduct: "/products/:id/edit",
 } as const;
 
 export const routesNames = objectKeys(routerConfig);
