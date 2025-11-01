@@ -8,7 +8,7 @@ import z from "zod";
 const coerceToNumberExceptEmptyString = z.preprocess(
   // Prevent coercing empty string to `0`.
   (arg) => (arg === "" ? undefined : arg),
-  z.coerce.number()
+  z.coerce.number(),
 );
 
 const productInputSchema = z.object({
@@ -35,7 +35,7 @@ const EditProduct = ({ id }: { id: string }) => {
     onSubmit: async ({ value, formApi }) => {
       const fieldMeta = formApi.state.fieldMeta;
       const nonDefaultValues = objectFromEntries(
-        objectEntries(value).filter(([key]) => !fieldMeta[key].isDefaultValue)
+        objectEntries(value).filter(([key]) => !fieldMeta[key].isDefaultValue),
       );
       const data = productInputSchema.parse(nonDefaultValues);
       await editProductMutation.mutateAsync(data);

@@ -6,7 +6,7 @@ import z from "zod";
 const coerceToNumberExceptEmptyString = z.preprocess(
   // Prevent coercing empty string to `0`.
   (arg) => (arg === "" ? undefined : arg),
-  z.coerce.number()
+  z.coerce.number(),
 );
 
 const productInputSchema = z.object({
