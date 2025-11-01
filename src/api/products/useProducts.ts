@@ -8,7 +8,6 @@ const productsPageCount = 5;
 
 const optionalStringSkipIfEmpty = z
   .string()
-  .optional()
   .transform((val) => (val === "" ? undefined : val));
 
 const filterParamsSchema = z
@@ -22,18 +21,10 @@ const filterParamsSchema = z
     ...rest,
     price_min: priceMin,
     price_max: priceMax,
-  }))
-  .optional();
+  }));
 
 const useProducts = (
-  filterParams:
-    | {
-        title?: string;
-        priceMin?: string;
-        priceMax?: string;
-        categoryId?: string;
-      }
-    | undefined,
+  filterParams: z.input<typeof filterParamsSchema>,
   page: number | undefined,
 ) => {
   return useQuery({

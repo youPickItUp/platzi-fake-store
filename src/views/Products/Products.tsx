@@ -1,20 +1,45 @@
+import { useLocation, useSearchParams } from "wouter";
 import { useCategories, useProducts } from "../../api";
 import { useState } from "react";
+import { objectEntries, objectFromEntries } from "tsafe";
 
 const Products = () => {
-  const [filterParams, setFilterParams] = useState({
-    title: "",
-    priceMin: "",
-    priceMax: "",
-    categoryId: "",
-  });
+  const [location, navigate] = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const filterParams = {
+    title: searchParams.get("title") ?? "",
+    priceMin: searchParams.get("priceMin") ?? "",
+    priceMax: searchParams.get("priceMax") ?? "",
+    categoryId: searchParams.get("categoryId") ?? "",
+  };
+
   const [page, setPage] = useState(0);
   const productsQuery = useProducts(filterParams, page);
   const categoriesQuery = useCategories();
 
   const onFilterChange = (name: keyof typeof filterParams, value: string) => {
-    setFilterParams((prev) => ({ ...prev, [name]: value }));
     setPage(0);
+
+    const nextFilterParamsWithFalsyValues = {
+      ...filterParams,
+      [name]: value,
+    };
+
+    const nextFilterEntriesWithoutFalsyValues = objectEntries(
+      nextFilterParamsWithFalsyValues,
+    ).filter(([, value]) => !!value);
+
+    if (nextFilterEntriesWithoutFalsyValues.length === 0) {
+      // Remove the otherwise persisting `?` from the url.
+      navigate(location);
+      return;
+    }
+
+    const nextFilterParamsWithoutFalsyValues = objectFromEntries(
+      nextFilterEntriesWithoutFalsyValues,
+    );
+
+    setSearchParams(nextFilterParamsWithoutFalsyValues);
   };
 
   return (
@@ -26,7 +51,7 @@ const Products = () => {
           <input
             id="title"
             name="title"
-            value={filterParams.title}
+            value={filterParams.title ?? ""}
             onChange={(e) => onFilterChange("title", e.target.value)}
           ></input>
         </div>
