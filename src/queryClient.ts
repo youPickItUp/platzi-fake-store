@@ -1,6 +1,12 @@
-import { QueryClient } from "@tanstack/react-query";
+import { QueryCache, QueryClient } from "@tanstack/react-query";
 
-const queryClient = new QueryClient();
+const queryCache = new QueryCache({
+  onError: (error, query) => {
+    console.error(error);
+    console.log(query);
+  },
+});
+const queryClient = new QueryClient({ queryCache });
 
 export const productsQueryKey = "PRODUCTS";
 queryClient.setQueryDefaults([productsQueryKey], { staleTime: 10_000 });

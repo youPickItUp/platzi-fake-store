@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import fakeStoreApi from "../../fakeStoreApi";
+import fakeStoreApi from "../fakeStoreApi";
 
 const useEditProduct = (id: string) => {
   return useMutation({

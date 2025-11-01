@@ -4,7 +4,7 @@ const categorySchema = z.object({
   id: z.number(),
   name: z.string(),
   slug: z.string(),
-  image: z.url(),
+  image: z.string(),
 });
 
 export const categoriesSchema = z.array(categorySchema);

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import fakeStoreApi from "../../fakeStoreApi";
-import { productSchema } from "../../apiSchemas";
+import fakeStoreApi from "../fakeStoreApi";
+import { productSchema } from "../apiSchemas";
 import { productsQueryKey } from "../../queryClient";
 
 const useProduct = (id: string) => {

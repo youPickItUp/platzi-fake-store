@@ -1,8 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
-import fakeStoreApi from "../../fakeStoreApi";
+import fakeStoreApi from "./fakeStoreApi";
 import z from "zod";
 import axios from "axios";
-import router from "../../router";
+import router from "../router";
 
 const tokensSchema = z
   .object({

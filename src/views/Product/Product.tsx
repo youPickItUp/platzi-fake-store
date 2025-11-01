@@ -1,4 +1,4 @@
-import useProduct from "./useProduct";
+import { useProduct } from "../../api";
 
 const Product = ({ id }: { id: string }) => {
   const { data: product } = useProduct(id);

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import fakeStoreApi from "../../fakeStoreApi";
-import { categoriesSchema } from "../../apiSchemas";
+import fakeStoreApi from "./fakeStoreApi";
+import { categoriesSchema } from "./apiSchemas";
 
 const useCategories = () => {
   return useQuery({

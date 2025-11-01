@@ -1,6 +1,5 @@
 import { useForm } from "@tanstack/react-form";
-import useAddProduct from "./useAddProduct";
-import useCategories from "./useCategories";
+import { useAddProduct, useCategories } from "../../api";
 import z from "zod";
 
 const coerceToNumberExceptEmptyString = z.preprocess(
@@ -18,8 +17,8 @@ const productInputSchema = z.object({
 });
 
 const AddProduct = () => {
-  const categories = useCategories();
-  const addProduct = useAddProduct();
+  const categoriesQuery = useCategories();
+  const addProductMutation = useAddProduct();
   const form = useForm({
     defaultValues: {
       title: "",
@@ -30,7 +29,7 @@ const AddProduct = () => {
     },
     onSubmit: async ({ value }) => {
       const data = productInputSchema.parse(value);
-      await addProduct.mutateAsync(data);
+      await addProductMutation.mutateAsync(data);
     },
   });
 
@@ -124,7 +123,7 @@ const AddProduct = () => {
                 onChange={(e) => field.handleChange(e.target.value)}
               >
                 <option value=""></option>
-                {categories.data?.map(({ id, name }) => (
+                {categoriesQuery.data?.map(({ id, name }) => (
                   <option value={id}>{name}</option>
                 ))}
               </select>

@@ -1,7 +1,5 @@
 import { useForm } from "@tanstack/react-form";
-import useEditProduct from "./useEditProduct";
-import useCategories from "./useCategories";
-import useProduct from "../Product/useProduct";
+import { useEditProduct, useProduct, useCategories } from "../../api";
 import { objectEntries, objectFromEntries } from "tsafe";
 import z from "zod";
 
