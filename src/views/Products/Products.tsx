@@ -1,6 +1,5 @@
 import { useLocation, useSearchParams } from "wouter";
 import { useCategories, useProducts } from "../../api";
-import { useState } from "react";
 import { objectEntries, objectFromEntries } from "tsafe";
 
 const Products = () => {
@@ -13,20 +12,35 @@ const Products = () => {
     categoryId: searchParams.get("categoryId") ?? "",
   };
 
-  const [page, setPage] = useState(0);
+  const pageParam = Number(searchParams.get("page"));
+  const page = Number.isFinite(pageParam) ? pageParam : 0;
+
   const productsQuery = useProducts(filterParams, page);
   const categoriesQuery = useCategories();
 
-  const onFilterChange = (name: keyof typeof filterParams, value: string) => {
-    setPage(0);
-
-    const nextFilterParamsWithFalsyValues = {
+  const onPageChange = (nextPage: number) => {
+    const nextSearchParamsWithFalsyValues = {
       ...filterParams,
-      [name]: value,
+      ...(nextPage === 0 ? {} : { page: nextPage.toString() }),
     };
 
+    onSearchParamsChange(nextSearchParamsWithFalsyValues);
+  };
+
+  const onFilterChange = (name: keyof typeof filterParams, value: string) => {
+    const nextSearchParamsWithFalsyValues = {
+      ...filterParams,
+      [name]: value,
+      // Overwrite previous `page` value with a falsy `""` value to remove page from url effectively setting page `0`.
+      page: "",
+    };
+
+    onSearchParamsChange(nextSearchParamsWithFalsyValues);
+  };
+
+  const onSearchParamsChange = (nextSearchParams: Record<string, string>) => {
     const nextFilterEntriesWithoutFalsyValues = objectEntries(
-      nextFilterParamsWithFalsyValues,
+      nextSearchParams,
     ).filter(([, value]) => !!value);
 
     if (nextFilterEntriesWithoutFalsyValues.length === 0) {
@@ -35,11 +49,11 @@ const Products = () => {
       return;
     }
 
-    const nextFilterParamsWithoutFalsyValues = objectFromEntries(
+    const nextSearchParamsWithoutFalsyValues = objectFromEntries(
       nextFilterEntriesWithoutFalsyValues,
     );
 
-    setSearchParams(nextFilterParamsWithoutFalsyValues);
+    setSearchParams(nextSearchParamsWithoutFalsyValues);
   };
 
   return (
@@ -92,12 +106,12 @@ const Products = () => {
       {productsQuery.data?.products.map(({ id, title }) => (
         <p key={id}>{title}</p>
       ))}
-      <button disabled={page === 0} onClick={() => setPage(page - 1)}>
+      <button disabled={page === 0} onClick={() => onPageChange(page - 1)}>
         Prev
       </button>
       <button
         disabled={!productsQuery.data?.hasNextPage}
-        onClick={() => setPage(page + 1)}
+        onClick={() => onPageChange(page + 1)}
       >
         Next
       </button>
