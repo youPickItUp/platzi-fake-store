@@ -4,6 +4,8 @@ import { productsSchema } from "../apiSchemas";
 import { productsQueryKey } from "../../queryClient";
 import z from "zod";
 
+const productsPageCount = 5;
+
 const optionalStringSkipIfEmpty = z
   .string()
   .optional()
@@ -20,7 +22,8 @@ const filterParamsSchema = z
     ...rest,
     price_min: priceMin,
     price_max: priceMax,
-  }));
+  }))
+  .optional();
 
 const useProducts = (
   filterParams:
@@ -31,14 +34,29 @@ const useProducts = (
         categoryId?: string;
       }
     | undefined,
+  page: number | undefined,
 ) => {
   return useQuery({
-    queryKey: [productsQueryKey, "products", filterParams],
+    queryKey: [productsQueryKey, "products", filterParams, page],
     queryFn: async () => {
       const { data } = await fakeStoreApi.get("/products", {
-        params: filterParamsSchema.parse(filterParams),
+        params: {
+          ...filterParamsSchema.parse(filterParams),
+          ...(page === undefined
+            ? {}
+            : {
+                offset: productsPageCount * page,
+                limit: productsPageCount + 1,
+              }),
+        },
       });
-      return productsSchema.parse(data);
+
+      const nthPageProductsAndOne = productsSchema.parse(data);
+
+      return {
+        products: nthPageProductsAndOne.slice(0, productsPageCount),
+        hasNextPage: nthPageProductsAndOne.length === productsPageCount + 1,
+      };
     },
   });
 };

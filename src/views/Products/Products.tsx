@@ -1,116 +1,81 @@
-import { useForm } from "@tanstack/react-form";
 import { useCategories, useProducts } from "../../api";
 import { useState } from "react";
 
 const Products = () => {
-  const [filterParams, setFilterParams] = useState<{
-    title: string;
-    priceMin: string;
-    priceMax: string;
-    categoryId: string;
-  }>();
-  const productsQuery = useProducts(filterParams);
+  const [filterParams, setFilterParams] = useState({
+    title: "",
+    priceMin: "",
+    priceMax: "",
+    categoryId: "",
+  });
+  const [page, setPage] = useState(0);
+  const productsQuery = useProducts(filterParams, page);
   const categoriesQuery = useCategories();
 
-  const form = useForm({
-    defaultValues: {
-      title: "",
-      priceMin: "",
-      priceMax: "",
-      categoryId: "",
-    },
-    onSubmit: async ({ value }) => {
-      setFilterParams(value);
-    },
-  });
+  const onFilterChange = (name: keyof typeof filterParams, value: string) => {
+    setFilterParams((prev) => ({ ...prev, [name]: value }));
+    setPage(0);
+  };
 
   return (
     <div>
       Products
       <div>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            form.handleSubmit();
-          }}
-        >
-          <div>
-            <form.Field name="title">
-              {(field) => (
-                <>
-                  <label htmlFor={field.name}>Title</label>
-                  <input
-                    id={field.name}
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  ></input>
-                </>
-              )}
-            </form.Field>
-            <form.Field name="priceMin">
-              {(field) => (
-                <>
-                  <label htmlFor={field.name}>Price min</label>
-                  <input
-                    id={field.name}
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  ></input>
-                </>
-              )}
-            </form.Field>
-            <form.Field name="priceMax">
-              {(field) => (
-                <>
-                  <label htmlFor={field.name}>Price max</label>
-                  <input
-                    id={field.name}
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  ></input>
-                </>
-              )}
-            </form.Field>
-            <form.Field name="categoryId">
-              {(field) => (
-                <div>
-                  <label htmlFor={field.name}>Choose a category:</label>
+        <div>
+          <label htmlFor="title">Title</label>
+          <input
+            id="title"
+            name="title"
+            value={filterParams.title}
+            onChange={(e) => onFilterChange("title", e.target.value)}
+          ></input>
+        </div>
+        <div>
+          <label htmlFor="priceMin">Price min</label>
+          <input
+            id="priceMin"
+            name="priceMin"
+            value={filterParams.priceMin}
+            onChange={(e) => onFilterChange("priceMin", e.target.value)}
+          ></input>
+        </div>
+        <div>
+          <label htmlFor="priceMax">Price max</label>
+          <input
+            id="priceMax"
+            name="priceMax"
+            value={filterParams.priceMax}
+            onChange={(e) => onFilterChange("priceMax", e.target.value)}
+          ></input>
+        </div>
+        <div>
+          <label htmlFor="categoryId">Choose a category:</label>
 
-                  <select
-                    name={field.name}
-                    id={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                  >
-                    <option value=""></option>
-                    {categoriesQuery.data?.map(({ id, name }) => (
-                      <option value={id}>{name}</option>
-                    ))}
-                  </select>
-                </div>
-              )}
-            </form.Field>
-            <form.Subscribe selector={(state) => state.isSubmitting}>
-              {(isSubmitting) => (
-                <button type="submit">
-                  {isSubmitting ? "loading" : "submit"}
-                </button>
-              )}
-            </form.Subscribe>
-          </div>
-        </form>
+          <select
+            name="categoryId"
+            id="categoryId"
+            value={filterParams.categoryId}
+            onChange={(e) => onFilterChange("categoryId", e.target.value)}
+          >
+            <option value=""></option>
+            {categoriesQuery.data?.map(({ id, name }) => (
+              <option value={id}>{name}</option>
+            ))}
+          </select>
+        </div>
       </div>
-      {productsQuery.data?.map(({ id, title }) => (
+      {productsQuery.data?.products.map(({ id, title }) => (
         <p key={id}>{title}</p>
       ))}
+      <button disabled={page === 0} onClick={() => setPage(page - 1)}>
+        Prev
+      </button>
+      <button
+        disabled={!productsQuery.data?.hasNextPage}
+        onClick={() => setPage(page + 1)}
+      >
+        Next
+      </button>
     </div>
   );
 };
