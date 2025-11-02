@@ -1,6 +1,7 @@
 import { useLocation, useSearchParams } from "wouter";
 import { useCategories, useProducts } from "../../api";
 import { objectEntries, objectFromEntries } from "tsafe";
+import { useEffect, useRef, useState } from "react";
 
 const Products = () => {
   const [location, navigate] = useLocation();
@@ -43,7 +44,7 @@ const Products = () => {
 
     const nextFilterEntriesWithoutFalsyValues = objectEntries(
       nextSearchParamsWithFalsyValues,
-    ).filter(([, value]) => Boolean(value));
+    ).filter(([, value]) => !!value);
 
     if (nextFilterEntriesWithoutFalsyValues.length === 0) {
       // Remove the otherwise persisting `?` from the url.
@@ -64,12 +65,10 @@ const Products = () => {
       <div>
         <div>
           <label htmlFor="title">Title</label>
-          <input
-            id="title"
-            name="title"
-            value={filterParams.title ?? ""}
-            onChange={(e) => onSearchChange({ title: e.target.value })}
-          ></input>
+          <Title
+            initialValue={filterParams.title}
+            onChange={(nextValue) => onSearchChange({ title: nextValue })}
+          />
         </div>
         <div>
           <label htmlFor="priceMin">Price min</label>
@@ -100,7 +99,9 @@ const Products = () => {
           >
             <option value=""></option>
             {categoriesQuery.data?.map(({ id, name }) => (
-              <option value={id}>{name}</option>
+              <option key={id} value={id}>
+                {name}
+              </option>
             ))}
           </select>
         </div>
@@ -128,7 +129,9 @@ const Products = () => {
         <>
           <button
             disabled={page === 0}
-            onClick={() => onSearchChange({ page: (page - 1).toString() })}
+            onClick={() =>
+              onSearchChange({ page: page === 1 ? "" : (page - 1).toString() })
+            }
           >
             Prev
           </button>
@@ -145,3 +148,43 @@ const Products = () => {
 };
 
 export default Products;
+
+const Title = ({
+  initialValue,
+  onChange,
+}: {
+  initialValue: string;
+  onChange: (nextValue: string) => void;
+}) => {
+  const timerIdRef = useRef<number>();
+  const onChangeRef = useRef<(nextValue: string) => void>();
+
+  const [value, setValue] = useState(initialValue);
+
+  useEffect(() => {
+    onChangeRef.current = onChange;
+  });
+  useEffect(() => () => clearTimeout(timerIdRef.current), []);
+
+  return (
+    <div>
+      <label htmlFor="title">Title</label>
+      <input
+        id="title"
+        name="title"
+        value={value}
+        onChange={(e) => {
+          const nextValue = e.target.value;
+          setValue(nextValue);
+
+          clearTimeout(timerIdRef.current);
+          timerIdRef.current = setTimeout(
+            (val: string) => onChangeRef.current?.(val),
+            5000,
+            nextValue,
+          );
+        }}
+      ></input>
+    </div>
+  );
+};
