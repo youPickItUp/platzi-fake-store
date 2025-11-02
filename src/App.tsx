@@ -2,6 +2,13 @@ import { Link, Route, Switch } from "wouter";
 import { lazy, Suspense } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import queryClient from "./queryClient";
+import {
+  Navbar,
+  NavbarBrand,
+  NavbarCollapse,
+  NavbarLink,
+  NavbarToggle,
+} from "flowbite-react";
 
 const LazyLogin = lazy(() => import("./views/Login"));
 const LazyProducts = lazy(() => import("./views/Products"));
@@ -13,6 +20,28 @@ const LazyNotFound = lazy(() => import("./views/NotFound"));
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
+      <Navbar fluid rounded>
+        <NavbarBrand as={Link} href="/">
+          <img
+            src="/favicon.ico"
+            className="mr-3 h-6 sm:h-9"
+            alt="Store logo"
+          />
+          <span className="self-center whitespace-nowrap text-xl font-semibold dark:text-white">
+            Store
+          </span>
+        </NavbarBrand>
+        <NavbarToggle />
+        <NavbarCollapse>
+          <NavbarLink as={Link} href="/">
+            Products
+          </NavbarLink>
+          <NavbarLink as={Link} href="/login">
+            Login
+          </NavbarLink>
+        </NavbarCollapse>
+      </Navbar>
+
       <Switch>
         <Route path="/login">
           <Suspense>
@@ -49,15 +78,6 @@ function App() {
           </Suspense>
         </Route>
       </Switch>
-
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        <Link to="/login">Login</Link>
-        <Link to="/">Products</Link>
-        <Link to="/products/122">Product</Link>
-        <Link to="/products/122/edit">Edit Product</Link>
-        <Link to="/products/new">Add product</Link>
-        <Link to="/some random url/ala ma kota">Not found</Link>
-      </div>
     </QueryClientProvider>
   );
 }

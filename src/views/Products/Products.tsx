@@ -1,8 +1,17 @@
-import { useLocation, useSearchParams } from "wouter";
+import { Link, useLocation, useSearchParams } from "wouter";
 import { useCategories, useProducts } from "../../api";
 import { objectEntries, objectFromEntries } from "tsafe";
 import { useEffect, useRef, useState } from "react";
 import useDeleteProduct from "../../api/products/useDeleteProduct";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeadCell,
+  TableRow,
+} from "flowbite-react";
+import { Label, Select, TextInput } from "flowbite-react";
 
 const Products = () => {
   const [location, navigate] = useLocation();
@@ -64,38 +73,41 @@ const Products = () => {
 
   return (
     <div>
-      Products
-      <button onClick={() => navigate("/products/new")}>Add +</button>
-      <div>
+      <Link
+        to={`/products/new`}
+        className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2"
+      >
+        Add
+      </Link>
+      <div className="flex max-w-md flex-col gap-4">
         <div>
-          <label htmlFor="title">Title</label>
           <Title
             initialValue={filterParams.title}
             onChange={(nextValue) => onSearchChange({ title: nextValue })}
           />
         </div>
         <div>
-          <label htmlFor="priceMin">Price min</label>
-          <input
+          <Label htmlFor="priceMin">Price min</Label>
+          <TextInput
             id="priceMin"
             name="priceMin"
             value={filterParams.priceMin}
             onChange={(e) => onSearchChange({ priceMin: e.target.value })}
-          ></input>
+          ></TextInput>
         </div>
         <div>
-          <label htmlFor="priceMax">Price max</label>
-          <input
+          <Label htmlFor="priceMax">Price max</Label>
+          <TextInput
             id="priceMax"
             name="priceMax"
             value={filterParams.priceMax}
             onChange={(e) => onSearchChange({ priceMax: e.target.value })}
-          ></input>
+          ></TextInput>
         </div>
         <div>
-          <label htmlFor="categoryId">Choose a category:</label>
+          <Label htmlFor="categoryId">Choose a category:</Label>
 
-          <select
+          <Select
             name="categoryId"
             id="categoryId"
             value={filterParams.categoryId}
@@ -107,12 +119,12 @@ const Products = () => {
                 {name}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
         <div>
-          <label htmlFor="sortBy">Sort by:</label>
+          <Label htmlFor="sortBy">Sort by:</Label>
 
-          <select
+          <Select
             name="sortBy"
             id="sortBy"
             value={sortBy}
@@ -121,46 +133,84 @@ const Products = () => {
             <option value=""></option>
             <option value="title">title</option>
             <option value="price">price</option>
-          </select>
+          </Select>
         </div>
       </div>
-      {productsQuery.data?.products.map(({ id, title, price }) => (
-        <div key={id}>
-          <p>
-            {title} {price.toFixed(2)}
-          </p>
-          <button onClick={() => navigate(`/products/${id}/edit`)}>Edit</button>
-          <button
-            onClick={() => {
-              const isConfirmed = confirm(
-                "Are you sure you want to delete this product?",
-              );
-              if (isConfirmed) {
-                deleteProductMutation.mutateAsync({ id: id.toString() });
-              }
-            }}
-          >
-            Delete
-          </button>
-        </div>
-      ))}
+      <div className="overflow-x-auto">
+        <Table hoverable>
+          <TableHead>
+            <TableRow>
+              <TableHeadCell>Title</TableHeadCell>
+              <TableHeadCell>Price</TableHeadCell>
+              <TableHeadCell>Category</TableHeadCell>
+              <TableHeadCell>
+                <span className="sr-only">Edit/Delete</span>
+              </TableHeadCell>
+            </TableRow>
+          </TableHead>
+          <TableBody className="divide-y">
+            {productsQuery.data?.products.map(
+              ({ id, title, price, category }) => (
+                <TableRow
+                  key={id}
+                  className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                >
+                  <TableCell
+                    scope="row"
+                    className="whitespace-nowrap font-medium text-gray-900 dark:text-white"
+                  >
+                    <Link to={`/products/${id}`}>{title}</Link>
+                  </TableCell>
+                  <TableCell>${price.toFixed(2)}</TableCell>
+                  <TableCell>{category.name}</TableCell>
+                  <TableCell>
+                    <Link
+                      className="inline-block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 focus:outline-none"
+                      to={`/products/${id}/edit`}
+                    >
+                      Edit
+                    </Link>
+                    <button
+                      className="cursor-pointer focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2"
+                      onClick={() => {
+                        const isConfirmed = confirm(
+                          "Are you sure you want to delete this product?",
+                        );
+                        if (isConfirmed) {
+                          deleteProductMutation.mutateAsync({
+                            id: id.toString(),
+                          });
+                        }
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </TableCell>
+                </TableRow>
+              ),
+            )}
+          </TableBody>
+        </Table>
+      </div>
       {page !== undefined && (
-        <>
+        <div className="flex">
           <button
             disabled={page === 0}
             onClick={() =>
               onSearchChange({ page: page === 1 ? "" : (page - 1).toString() })
             }
+            className="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700"
           >
             Prev
           </button>
           <button
             disabled={!productsQuery.data?.hasNextPage}
             onClick={() => onSearchChange({ page: (page + 1).toString() })}
+            className="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700"
           >
             Next
           </button>
-        </>
+        </div>
       )}
     </div>
   );
@@ -187,8 +237,8 @@ const Title = ({
 
   return (
     <div>
-      <label htmlFor="title">Title</label>
-      <input
+      <Label htmlFor="title">Title</Label>
+      <TextInput
         id="title"
         name="title"
         value={value}
@@ -203,7 +253,7 @@ const Title = ({
             nextValue,
           );
         }}
-      ></input>
+      ></TextInput>
     </div>
   );
 };
