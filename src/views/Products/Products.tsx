@@ -181,7 +181,7 @@ const Title = ({
           clearTimeout(timerIdRef.current);
           timerIdRef.current = setTimeout(
             (val: string) => onChangeRef.current?.(val),
-            5000,
+            300,
             nextValue,
           );
         }}
