@@ -2,6 +2,7 @@ import { useLocation, useSearchParams } from "wouter";
 import { useCategories, useProducts } from "../../api";
 import { objectEntries, objectFromEntries } from "tsafe";
 import { useEffect, useRef, useState } from "react";
+import useDeleteProduct from "../../api/products/useDeleteProduct";
 
 const Products = () => {
   const [location, navigate] = useLocation();
@@ -58,6 +59,8 @@ const Products = () => {
 
     setSearchParams(nextSearchParamsWithoutFalsyValues);
   };
+
+  const deleteProductMutation = useDeleteProduct();
 
   return (
     <div>
@@ -122,9 +125,24 @@ const Products = () => {
         </div>
       </div>
       {productsQuery.data?.products.map(({ id, title, price }) => (
-        <p key={id}>
-          {title} {price.toFixed(2)}
-        </p>
+        <div key={id}>
+          <p>
+            {title} {price.toFixed(2)}
+          </p>
+          <button onClick={() => navigate(`/products/${id}/edit`)}>Edit</button>
+          <button
+            onClick={() => {
+              const isConfirmed = confirm(
+                "Are you sure you want to delete this product?",
+              );
+              if (isConfirmed) {
+                deleteProductMutation.mutateAsync({ id: id.toString() });
+              }
+            }}
+          >
+            Delete
+          </button>
+        </div>
       ))}
       {page !== undefined && (
         <>

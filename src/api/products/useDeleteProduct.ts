@@ -2,14 +2,14 @@ import { useMutation } from "@tanstack/react-query";
 import fakeStoreApi from "../fakeStoreApi";
 import queryClient, { productsQueryKey } from "../../queryClient";
 
-const useEditProduct = (id: string) => {
+const useDeleteProduct = () => {
   return useMutation({
-    mutationFn: async (data: unknown) => {
-      await fakeStoreApi.put(`/products/${id}`, data);
+    mutationFn: ({ id }: { id: string }) => {
+      return fakeStoreApi.delete(`/products/${id}`);
     },
     onSuccess: () =>
       queryClient.invalidateQueries({ queryKey: [productsQueryKey] }),
   });
 };
 
-export default useEditProduct;
+export default useDeleteProduct;
