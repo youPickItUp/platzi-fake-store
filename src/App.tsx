@@ -1,4 +1,3 @@
-import "./App.css";
 import { Link, Route, Switch } from "wouter";
 import { lazy, Suspense } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
