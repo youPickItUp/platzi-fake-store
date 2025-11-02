@@ -62,6 +62,7 @@ const Products = () => {
   return (
     <div>
       Products
+      <button onClick={() => navigate("/products/new")}>Add +</button>
       <div>
         <div>
           <label htmlFor="title">Title</label>
