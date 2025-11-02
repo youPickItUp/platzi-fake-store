@@ -5,6 +5,7 @@ import { objectEntries, objectFromEntries } from "tsafe";
 const Products = () => {
   const [location, navigate] = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
+
   const filterParams = {
     title: searchParams.get("title") ?? "",
     priceMin: searchParams.get("priceMin") ?? "",
@@ -12,36 +13,37 @@ const Products = () => {
     categoryId: searchParams.get("categoryId") ?? "",
   };
 
-  const pageParam = Number(searchParams.get("page"));
-  const page = Number.isFinite(pageParam) ? pageParam : 0;
+  const sortByParam = searchParams.get("sortBy");
+  const sortBy =
+    sortByParam === "title" || sortByParam === "price" ? sortByParam : "";
 
-  const productsQuery = useProducts(filterParams, page);
+  const pageParamNumber = Number(searchParams.get("page"));
+  const page = Number.isFinite(pageParamNumber) ? pageParamNumber : 0;
+
+  const productsQuery = useProducts({
+    filterParams,
+    page,
+    sortBy: sortBy ? sortBy : undefined,
+  });
+
   const categoriesQuery = useCategories();
 
-  const onPageChange = (nextPage: number) => {
+  const onSearchChange = (
+    updatedParams: Partial<
+      Record<"page" | "sortBy" | keyof typeof filterParams, string>
+    >,
+  ) => {
     const nextSearchParamsWithFalsyValues = {
       ...filterParams,
-      ...(nextPage === 0 ? {} : { page: nextPage.toString() }),
-    };
-
-    onSearchParamsChange(nextSearchParamsWithFalsyValues);
-  };
-
-  const onFilterChange = (name: keyof typeof filterParams, value: string) => {
-    const nextSearchParamsWithFalsyValues = {
-      ...filterParams,
-      [name]: value,
+      sortBy,
       // Overwrite previous `page` value with a falsy `""` value to remove page from url effectively setting page `0`.
       page: "",
+      ...updatedParams,
     };
 
-    onSearchParamsChange(nextSearchParamsWithFalsyValues);
-  };
-
-  const onSearchParamsChange = (nextSearchParams: Record<string, string>) => {
     const nextFilterEntriesWithoutFalsyValues = objectEntries(
-      nextSearchParams,
-    ).filter(([, value]) => !!value);
+      nextSearchParamsWithFalsyValues,
+    ).filter(([, value]) => Boolean(value));
 
     if (nextFilterEntriesWithoutFalsyValues.length === 0) {
       // Remove the otherwise persisting `?` from the url.
@@ -66,7 +68,7 @@ const Products = () => {
             id="title"
             name="title"
             value={filterParams.title ?? ""}
-            onChange={(e) => onFilterChange("title", e.target.value)}
+            onChange={(e) => onSearchChange({ title: e.target.value })}
           ></input>
         </div>
         <div>
@@ -75,7 +77,7 @@ const Products = () => {
             id="priceMin"
             name="priceMin"
             value={filterParams.priceMin}
-            onChange={(e) => onFilterChange("priceMin", e.target.value)}
+            onChange={(e) => onSearchChange({ priceMin: e.target.value })}
           ></input>
         </div>
         <div>
@@ -84,7 +86,7 @@ const Products = () => {
             id="priceMax"
             name="priceMax"
             value={filterParams.priceMax}
-            onChange={(e) => onFilterChange("priceMax", e.target.value)}
+            onChange={(e) => onSearchChange({ priceMax: e.target.value })}
           ></input>
         </div>
         <div>
@@ -94,7 +96,7 @@ const Products = () => {
             name="categoryId"
             id="categoryId"
             value={filterParams.categoryId}
-            onChange={(e) => onFilterChange("categoryId", e.target.value)}
+            onChange={(e) => onSearchChange({ categoryId: e.target.value })}
           >
             <option value=""></option>
             {categoriesQuery.data?.map(({ id, name }) => (
@@ -102,19 +104,42 @@ const Products = () => {
             ))}
           </select>
         </div>
+        <div>
+          <label htmlFor="sortBy">Sort by:</label>
+
+          <select
+            name="sortBy"
+            id="sortBy"
+            value={sortBy}
+            onChange={(e) => onSearchChange({ sortBy: e.target.value })}
+          >
+            <option value=""></option>
+            <option value="title">title</option>
+            <option value="price">price</option>
+          </select>
+        </div>
       </div>
-      {productsQuery.data?.products.map(({ id, title }) => (
-        <p key={id}>{title}</p>
+      {productsQuery.data?.products.map(({ id, title, price }) => (
+        <p key={id}>
+          {title} {price.toFixed(2)}
+        </p>
       ))}
-      <button disabled={page === 0} onClick={() => onPageChange(page - 1)}>
-        Prev
-      </button>
-      <button
-        disabled={!productsQuery.data?.hasNextPage}
-        onClick={() => onPageChange(page + 1)}
-      >
-        Next
-      </button>
+      {page !== undefined && (
+        <>
+          <button
+            disabled={page === 0}
+            onClick={() => onSearchChange({ page: (page - 1).toString() })}
+          >
+            Prev
+          </button>
+          <button
+            disabled={!productsQuery.data?.hasNextPage}
+            onClick={() => onSearchChange({ page: (page + 1).toString() })}
+          >
+            Next
+          </button>
+        </>
+      )}
     </div>
   );
 };
