@@ -1,5 +1,6 @@
 import { useForm } from "@tanstack/react-form";
 import { useLogin } from "../../api";
+import { Button, Label, TextInput } from "flowbite-react";
 
 const Login = () => {
   const loginMutation = useLogin();
@@ -16,8 +17,8 @@ const Login = () => {
 
   return (
     <div>
-      Login
       <form
+        className="flex max-w-md flex-col gap-4"
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -27,35 +28,35 @@ const Login = () => {
         <form.Field name="email">
           {(field) => (
             <>
-              <label htmlFor={field.name}>Username</label>
-              <input
+              <Label htmlFor={field.name}>Username</Label>
+              <TextInput
                 id={field.name}
                 name={field.name}
                 value={field.state.value}
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
-              ></input>
+              ></TextInput>
             </>
           )}
         </form.Field>
         <form.Field name="password">
           {(field) => (
             <>
-              <label htmlFor={field.name}>Password</label>
-              <input
+              <Label htmlFor={field.name}>Password</Label>
+              <TextInput
                 type="password"
                 id={field.name}
                 name={field.name}
                 value={field.state.value}
                 onBlur={field.handleBlur}
                 onChange={(e) => field.handleChange(e.target.value)}
-              ></input>
+              ></TextInput>
             </>
           )}
         </form.Field>
         <form.Subscribe selector={(state) => state.isSubmitting}>
           {(isSubmitting) => (
-            <button type="submit">{isSubmitting ? "loading" : "submit"}</button>
+            <Button type="submit">{isSubmitting ? "Loading" : "Submit"}</Button>
           )}
         </form.Subscribe>
       </form>
