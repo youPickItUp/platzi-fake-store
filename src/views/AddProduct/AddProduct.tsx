@@ -1,12 +1,12 @@
 import { useForm } from "@tanstack/react-form";
 import { useAddProduct, useCategories } from "../../api";
 import z from "zod";
-import { Button, Card, Label, Select, TextInput } from "flowbite-react";
+import { Badge, Button, Card, Label, Select, TextInput } from "flowbite-react";
 import { useLocation } from "wouter";
 
 const coerceToNumberExceptEmptyString = z.preprocess(
   // Prevent coercing empty string to `0`.
-  (arg) => (arg === "" ? undefined : arg),
+  (arg: string) => (arg === "" ? undefined : arg),
   z.coerce.number(),
 );
 
@@ -29,6 +29,9 @@ const AddProduct = () => {
       description: "",
       images: [""],
       categoryId: "",
+    },
+    validators: {
+      onChange: productInputSchema,
     },
     onSubmit: async ({ value }) => {
       const data = productInputSchema.parse(value);
@@ -67,6 +70,15 @@ const AddProduct = () => {
                   onChange={(e) => field.handleChange(e.target.value)}
                   required
                 />
+                {!field.state.meta.isValid &&
+                  !field.state.meta.isDefaultValue && (
+                    <Badge color="red">
+                      {field.state.meta.errors
+                        .map((err) => err?.message)
+                        .filter(Boolean)
+                        .join(", ")}
+                    </Badge>
+                  )}
               </div>
             )}
           </form.Field>
@@ -85,6 +97,15 @@ const AddProduct = () => {
                   onChange={(e) => field.handleChange(e.target.value)}
                   required
                 />
+                {!field.state.meta.isValid &&
+                  !field.state.meta.isDefaultValue && (
+                    <Badge color="red">
+                      {field.state.meta.errors
+                        .map((err) => err?.message)
+                        .filter(Boolean)
+                        .join(", ")}
+                    </Badge>
+                  )}
               </div>
             )}
           </form.Field>
@@ -100,7 +121,17 @@ const AddProduct = () => {
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
+                  required
                 />
+                {!field.state.meta.isValid &&
+                  !field.state.meta.isDefaultValue && (
+                    <Badge color="red">
+                      {field.state.meta.errors
+                        .map((err) => err?.message)
+                        .filter(Boolean)
+                        .join(", ")}
+                    </Badge>
+                  )}
               </div>
             )}
           </form.Field>
@@ -123,8 +154,18 @@ const AddProduct = () => {
                             onChange={(e) =>
                               subfield.handleChange(e.target.value)
                             }
-                            className="flex-grow"
+                            required
                           />
+                          {!subfield.state.meta.isValid &&
+                            !subfield.state.meta.isDefaultValue && (
+                              <Badge color="red">
+                                {console.log(subfield.state.meta.errors) ??
+                                  subfield.state.meta.errors
+                                    .map((err) => err?.message)
+                                    .filter(Boolean)
+                                    .join(", ")}
+                              </Badge>
+                            )}
                         </div>
                       )}
                     </form.Field>
@@ -151,6 +192,7 @@ const AddProduct = () => {
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
+                  required
                 >
                   <option value="">Select category</option>
                   {categoriesQuery.data?.map(({ id, name }) => (
@@ -159,6 +201,15 @@ const AddProduct = () => {
                     </option>
                   ))}
                 </Select>
+                {!field.state.meta.isValid &&
+                  !field.state.meta.isDefaultValue && (
+                    <Badge color="red">
+                      {field.state.meta.errors
+                        .map((err) => err?.message)
+                        .filter(Boolean)
+                        .join(", ")}
+                    </Badge>
+                  )}
               </div>
             )}
           </form.Field>
@@ -166,7 +217,7 @@ const AddProduct = () => {
           {/* Submit */}
           <form.Subscribe selector={(state) => state.isSubmitting}>
             {(isSubmitting) => (
-              <Button type="submit">
+              <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? "Submitting..." : "Submit"}
               </Button>
             )}

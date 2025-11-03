@@ -27,10 +27,6 @@ const useLogin = () => {
       new Notify({
         status: "success",
         title: "Login successful!",
-        effect: "fade",
-        speed: 300,
-        showCloseButton: true,
-        autoclose: true,
         autotimeout: 5000,
       });
       navigate("/");
@@ -39,10 +35,6 @@ const useLogin = () => {
       new Notify({
         status: "error",
         title: "Login failed!",
-        effect: "fade",
-        speed: 300,
-        showCloseButton: true,
-        autoclose: true,
         autotimeout: 5000,
       });
     },
