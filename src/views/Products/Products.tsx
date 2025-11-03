@@ -75,65 +75,69 @@ const Products = () => {
 
   return (
     <div className="bg-gray-50 px-8 py-12">
-      <div className="flex max-w-md flex-col gap-4">
+      <div className="flex flex-row justify-between">
+        <div className="flex max-w-md flex-col gap-4">
+          <Card>
+            <div className="flex gap-x-4">
+              <Title
+                initialValue={filterParams.title}
+                onChange={(nextValue) => onSearchChange({ title: nextValue })}
+              />
+              <div className="flex gap-x-2 items-center">
+                <Label htmlFor="categoryId">Category:</Label>
+
+                <Select
+                  name="categoryId"
+                  id="categoryId"
+                  value={filterParams.categoryId}
+                  onChange={(e) =>
+                    onSearchChange({ categoryId: e.target.value })
+                  }
+                  sizing="sm"
+                >
+                  <option value=""></option>
+                  {categoriesQuery.data?.map(({ id, name }) => (
+                    <option key={id} value={id}>
+                      {name}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+            </div>
+            <div className="flex gap-x-4">
+              <div className="flex gap-x-2 items-center">
+                <Label className="shrink-0" htmlFor="priceMin">
+                  Price min:
+                </Label>
+                <TextInput
+                  id="priceMin"
+                  name="priceMin"
+                  value={filterParams.priceMin}
+                  onChange={(e) => onSearchChange({ priceMin: e.target.value })}
+                  sizing="sm"
+                ></TextInput>
+              </div>
+              <div className="flex gap-x-2 items-center">
+                <Label className="shrink-0" htmlFor="priceMax">
+                  Price max:
+                </Label>
+                <TextInput
+                  id="priceMax"
+                  name="priceMax"
+                  value={filterParams.priceMax}
+                  onChange={(e) => onSearchChange({ priceMax: e.target.value })}
+                  sizing="sm"
+                ></TextInput>
+              </div>
+            </div>
+          </Card>
+        </div>
         <Link
           to={`/products/new`}
-          className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5"
+          className="self-end focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5"
         >
           Create new product
         </Link>
-        <Card>
-          <div className="flex gap-x-4">
-            <Title
-              initialValue={filterParams.title}
-              onChange={(nextValue) => onSearchChange({ title: nextValue })}
-            />
-            <div className="flex gap-x-2 items-center">
-              <Label htmlFor="categoryId">Category:</Label>
-
-              <Select
-                name="categoryId"
-                id="categoryId"
-                value={filterParams.categoryId}
-                onChange={(e) => onSearchChange({ categoryId: e.target.value })}
-                sizing="sm"
-              >
-                <option value=""></option>
-                {categoriesQuery.data?.map(({ id, name }) => (
-                  <option key={id} value={id}>
-                    {name}
-                  </option>
-                ))}
-              </Select>
-            </div>
-          </div>
-          <div className="flex gap-x-4">
-            <div className="flex gap-x-2 items-center">
-              <Label className="shrink-0" htmlFor="priceMin">
-                Price min:
-              </Label>
-              <TextInput
-                id="priceMin"
-                name="priceMin"
-                value={filterParams.priceMin}
-                onChange={(e) => onSearchChange({ priceMin: e.target.value })}
-                sizing="sm"
-              ></TextInput>
-            </div>
-            <div className="flex gap-x-2 items-center">
-              <Label className="shrink-0" htmlFor="priceMax">
-                Price max:
-              </Label>
-              <TextInput
-                id="priceMax"
-                name="priceMax"
-                value={filterParams.priceMax}
-                onChange={(e) => onSearchChange({ priceMax: e.target.value })}
-                sizing="sm"
-              ></TextInput>
-            </div>
-          </div>
-        </Card>
       </div>
       <Card className="overflow-x-auto my-5">
         <Table hoverable>
