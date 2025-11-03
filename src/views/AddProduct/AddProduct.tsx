@@ -145,7 +145,7 @@ const AddProduct = () => {
           <form.Field name="categoryId">
             {(field) => (
               <div>
-                <Label htmlFor={field.name} />
+                <Label htmlFor={field.name}>Category</Label>
                 <Select
                   id={field.name}
                   value={field.state.value}

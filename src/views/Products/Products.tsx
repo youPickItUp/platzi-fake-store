@@ -171,7 +171,7 @@ const Products = () => {
               </TableHeadCell>
             </TableRow>
           </TableHead>
-          <TableBody className="divide-y">
+          <TableBody className="divide-y" data-testid="tableBodyId">
             {productsQuery.data?.products.map(
               ({ id, title, price, category }) => (
                 <TableRow
