@@ -1,7 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import fakeStoreApi from "./fakeStoreApi";
 import z from "zod";
-import axios from "axios";
 import { useLocation } from "wouter";
 
 const tokensSchema = z
@@ -23,7 +22,8 @@ const useLogin = () => {
       return tokensSchema.parse(response.data);
     },
     onSuccess: ({ accessToken }) => {
-      axios.defaults.headers.common[`Authorization`] = `Bearer ${accessToken}`;
+      fakeStoreApi.defaults.headers.common[`Authorization`] =
+        `Bearer ${accessToken}`;
       navigate("/");
     },
   });
