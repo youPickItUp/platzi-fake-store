@@ -4,6 +4,7 @@ import { objectEntries, objectFromEntries } from "tsafe";
 import { useEffect, useRef, useState } from "react";
 import useDeleteProduct from "../../api/products/useDeleteProduct";
 import {
+  Button,
   Card,
   Table,
   TableBody,
@@ -77,7 +78,7 @@ const Products = () => {
       <div className="flex max-w-md flex-col gap-4">
         <Link
           to={`/products/new`}
-          className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2"
+          className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5"
         >
           Create new product
         </Link>
@@ -133,29 +134,37 @@ const Products = () => {
             </div>
           </div>
         </Card>
-        <div>
-          <Label htmlFor="sortBy">Sort by:</Label>
-
-          <Select
-            name="sortBy"
-            id="sortBy"
-            value={sortBy}
-            onChange={(e) => onSearchChange({ sortBy: e.target.value })}
-            sizing="sm"
-          >
-            <option value=""></option>
-            <option value="title">title</option>
-            <option value="price">price</option>
-            sizing="sm"
-          </Select>
-        </div>
       </div>
-      <div className="overflow-x-auto">
+      <Card className="overflow-x-auto my-5">
         <Table hoverable>
           <TableHead>
             <TableRow>
-              <TableHeadCell>Title</TableHeadCell>
-              <TableHeadCell>Price</TableHeadCell>
+              <TableHeadCell>
+                <button
+                  type="button"
+                  onClick={() =>
+                    onSearchChange({
+                      sortBy: sortBy === "title" ? "" : "title",
+                    })
+                  }
+                  className="uppercase cursor-pointer"
+                >
+                  Title {sortBy === "title" ? "⬇️" : "↕️"}
+                </button>
+              </TableHeadCell>
+              <TableHeadCell>
+                <button
+                  type="button"
+                  onClick={() =>
+                    onSearchChange({
+                      sortBy: sortBy === "price" ? "" : "price",
+                    })
+                  }
+                  className="uppercase cursor-pointer"
+                >
+                  Price {sortBy === "price" ? "⬇️" : "↕️"}
+                </button>
+              </TableHeadCell>
               <TableHeadCell>Category</TableHeadCell>
               <TableHeadCell>
                 <span className="sr-only">Edit/Delete</span>
@@ -205,27 +214,23 @@ const Products = () => {
             )}
           </TableBody>
         </Table>
-      </div>
-      {page !== undefined && (
-        <div className="flex">
-          <button
+        <div className="flex gap-x-2">
+          <Button
             disabled={page === 0}
             onClick={() =>
               onSearchChange({ page: page === 1 ? "" : (page - 1).toString() })
             }
-            className="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700"
           >
             Prev
-          </button>
-          <button
+          </Button>
+          <Button
             disabled={!productsQuery.data?.hasNextPage}
             onClick={() => onSearchChange({ page: (page + 1).toString() })}
-            className="flex items-center justify-center px-3 h-8 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-gray-700"
           >
             Next
-          </button>
+          </Button>
         </div>
-      )}
+      </Card>
     </div>
   );
 };
