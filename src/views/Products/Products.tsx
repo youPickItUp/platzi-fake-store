@@ -4,6 +4,7 @@ import { objectEntries, objectFromEntries } from "tsafe";
 import { useEffect, useRef, useState } from "react";
 import useDeleteProduct from "../../api/products/useDeleteProduct";
 import {
+  Card,
   Table,
   TableBody,
   TableCell,
@@ -72,55 +73,66 @@ const Products = () => {
   const deleteProductMutation = useDeleteProduct();
 
   return (
-    <div>
-      <Link
-        to={`/products/new`}
-        className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2"
-      >
-        Add
-      </Link>
+    <div className="bg-gray-50 px-8 py-12">
       <div className="flex max-w-md flex-col gap-4">
-        <div>
-          <Title
-            initialValue={filterParams.title}
-            onChange={(nextValue) => onSearchChange({ title: nextValue })}
-          />
-        </div>
-        <div>
-          <Label htmlFor="priceMin">Price min</Label>
-          <TextInput
-            id="priceMin"
-            name="priceMin"
-            value={filterParams.priceMin}
-            onChange={(e) => onSearchChange({ priceMin: e.target.value })}
-          ></TextInput>
-        </div>
-        <div>
-          <Label htmlFor="priceMax">Price max</Label>
-          <TextInput
-            id="priceMax"
-            name="priceMax"
-            value={filterParams.priceMax}
-            onChange={(e) => onSearchChange({ priceMax: e.target.value })}
-          ></TextInput>
-        </div>
-        <div>
-          <Label htmlFor="categoryId">Choose a category:</Label>
+        <Link
+          to={`/products/new`}
+          className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2"
+        >
+          Create new product
+        </Link>
+        <Card>
+          <div className="flex gap-x-4">
+            <Title
+              initialValue={filterParams.title}
+              onChange={(nextValue) => onSearchChange({ title: nextValue })}
+            />
+            <div className="flex gap-x-2 items-center">
+              <Label htmlFor="categoryId">Category:</Label>
 
-          <Select
-            name="categoryId"
-            id="categoryId"
-            value={filterParams.categoryId}
-            onChange={(e) => onSearchChange({ categoryId: e.target.value })}
-          >
-            <option value=""></option>
-            {categoriesQuery.data?.map(({ id, name }) => (
-              <option key={id} value={id}>
-                {name}
-              </option>
-            ))}
-          </Select>
-        </div>
+              <Select
+                name="categoryId"
+                id="categoryId"
+                value={filterParams.categoryId}
+                onChange={(e) => onSearchChange({ categoryId: e.target.value })}
+                sizing="sm"
+              >
+                <option value=""></option>
+                {categoriesQuery.data?.map(({ id, name }) => (
+                  <option key={id} value={id}>
+                    {name}
+                  </option>
+                ))}
+              </Select>
+            </div>
+          </div>
+          <div className="flex gap-x-4">
+            <div className="flex gap-x-2 items-center">
+              <Label className="shrink-0" htmlFor="priceMin">
+                Price min:
+              </Label>
+              <TextInput
+                id="priceMin"
+                name="priceMin"
+                value={filterParams.priceMin}
+                onChange={(e) => onSearchChange({ priceMin: e.target.value })}
+                sizing="sm"
+              ></TextInput>
+            </div>
+            <div className="flex gap-x-2 items-center">
+              <Label className="shrink-0" htmlFor="priceMax">
+                Price max:
+              </Label>
+              <TextInput
+                id="priceMax"
+                name="priceMax"
+                value={filterParams.priceMax}
+                onChange={(e) => onSearchChange({ priceMax: e.target.value })}
+                sizing="sm"
+              ></TextInput>
+            </div>
+          </div>
+        </Card>
         <div>
           <Label htmlFor="sortBy">Sort by:</Label>
 
@@ -129,10 +141,12 @@ const Products = () => {
             id="sortBy"
             value={sortBy}
             onChange={(e) => onSearchChange({ sortBy: e.target.value })}
+            sizing="sm"
           >
             <option value=""></option>
             <option value="title">title</option>
             <option value="price">price</option>
+            sizing="sm"
           </Select>
         </div>
       </div>
@@ -236,8 +250,8 @@ const Title = ({
   useEffect(() => () => clearTimeout(timerIdRef.current), []);
 
   return (
-    <div>
-      <Label htmlFor="title">Title</Label>
+    <div className="flex gap-x-2 items-center">
+      <Label htmlFor="title">Title:</Label>
       <TextInput
         id="title"
         name="title"
@@ -253,6 +267,7 @@ const Title = ({
             nextValue,
           );
         }}
+        sizing="sm"
       ></TextInput>
     </div>
   );
