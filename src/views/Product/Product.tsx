@@ -35,7 +35,9 @@ const Product = ({ id }: { id: string }) => {
               <p className="text-gray-600 mt-2">{product.description}</p>
 
               <div className="mt-4">
-                <Badge color="info">{product.category?.name}</Badge>
+                <Badge color="info" className="inline-block">
+                  {product.category?.name}
+                </Badge>
               </div>
 
               <p className="text-3xl font-bold text-emerald-600 mt-6">

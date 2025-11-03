@@ -1,9 +1,9 @@
 import { Link, useLocation, useSearchParams } from "wouter";
 import { useCategories, useProducts } from "../../api";
 import { objectEntries, objectFromEntries } from "tsafe";
-import { useEffect, useRef, useState } from "react";
 import useDeleteProduct from "../../api/products/useDeleteProduct";
 import {
+  Badge,
   Button,
   Card,
   Table,
@@ -14,6 +14,7 @@ import {
   TableRow,
 } from "flowbite-react";
 import { Label, Select, TextInput } from "flowbite-react";
+import Title from "./Title";
 
 const Products = () => {
   const [location, navigate] = useLocation();
@@ -75,7 +76,7 @@ const Products = () => {
 
   return (
     <div className="bg-gray-50 px-8 py-12">
-      <div className="flex flex-row justify-between">
+      <div className="flex flex-row justify-between flex-wrap gap-4">
         <div className="flex max-w-md flex-col gap-4">
           <Card>
             <div className="flex gap-x-4">
@@ -139,8 +140,8 @@ const Products = () => {
           Create new product
         </Link>
       </div>
-      <Card className="overflow-x-auto my-5">
-        <Table hoverable>
+      <Card className="overflow-x-auto my-5 items-center">
+        <Table hoverable className="hidden lg:block">
           <TableHead>
             <TableRow>
               <TableHeadCell>
@@ -218,7 +219,79 @@ const Products = () => {
             )}
           </TableBody>
         </Table>
-        <div className="flex gap-x-2">
+        <div className="lg:hidden flex flex-col gap-4">
+          <div className="flex flex-row gap-x-4">
+            <button
+              type="button"
+              onClick={() =>
+                onSearchChange({
+                  sortBy: sortBy === "title" ? "" : "title",
+                })
+              }
+              className="uppercase cursor-pointer"
+            >
+              Title {sortBy === "title" ? "⬇️" : "↕️"}
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                onSearchChange({
+                  sortBy: sortBy === "price" ? "" : "price",
+                })
+              }
+              className="uppercase cursor-pointer"
+            >
+              Price {sortBy === "price" ? "⬇️" : "↕️"}
+            </button>
+          </div>
+          {productsQuery.data?.products.map(
+            ({ id, title, price, category, images }) => (
+              <Card
+                className="max-w-sm"
+                imgAlt="Product image"
+                imgSrc={images[0]}
+              >
+                <Badge color="info" className="self-start">
+                  {category.name}
+                </Badge>
+                <Link to={`/products/${id}`}>
+                  <h1 className="text-xl font-semibold tracking-tight text-gray-900 dark:text-white">
+                    {title}
+                  </h1>
+                </Link>
+                <div className="flex items-center justify-between">
+                  <span className="text-3xl font-bold text-gray-900 dark:text-white">
+                    ${price.toFixed(2)}
+                  </span>
+                  <div className="flex flex-row">
+                    <Link
+                      className="inline-block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 focus:outline-none"
+                      to={`/products/${id}/edit`}
+                    >
+                      Edit
+                    </Link>
+                    <button
+                      className="cursor-pointer focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2"
+                      onClick={() => {
+                        const isConfirmed = confirm(
+                          "Are you sure you want to delete this product?",
+                        );
+                        if (isConfirmed) {
+                          deleteProductMutation.mutateAsync({
+                            id: id.toString(),
+                          });
+                        }
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </Card>
+            ),
+          )}
+        </div>
+        <div className="flex justify-center lg:justify-start gap-x-2">
           <Button
             disabled={page === 0}
             onClick={() =>
@@ -240,44 +313,3 @@ const Products = () => {
 };
 
 export default Products;
-
-const Title = ({
-  initialValue,
-  onChange,
-}: {
-  initialValue: string;
-  onChange: (nextValue: string) => void;
-}) => {
-  const timerIdRef = useRef<number>();
-  const onChangeRef = useRef<(nextValue: string) => void>();
-
-  const [value, setValue] = useState(initialValue);
-
-  useEffect(() => {
-    onChangeRef.current = onChange;
-  });
-  useEffect(() => () => clearTimeout(timerIdRef.current), []);
-
-  return (
-    <div className="flex gap-x-2 items-center">
-      <Label htmlFor="title">Title:</Label>
-      <TextInput
-        id="title"
-        name="title"
-        value={value}
-        onChange={(e) => {
-          const nextValue = e.target.value;
-          setValue(nextValue);
-
-          clearTimeout(timerIdRef.current);
-          timerIdRef.current = setTimeout(
-            (val: string) => onChangeRef.current?.(val),
-            300,
-            nextValue,
-          );
-        }}
-        sizing="sm"
-      ></TextInput>
-    </div>
-  );
-};
