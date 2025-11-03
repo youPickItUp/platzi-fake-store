@@ -2,7 +2,8 @@ import { useForm } from "@tanstack/react-form";
 import { useEditProduct, useProduct, useCategories } from "../../api";
 import { objectEntries, objectFromEntries } from "tsafe";
 import z from "zod";
-import { Button, Card, Label, Select, TextInput } from "flowbite-react";
+import { Badge, Button, Card, Label, Select, TextInput } from "flowbite-react";
+import clsx from "clsx";
 
 const coerceToNumberExceptEmptyString = z.preprocess(
   // Prevent coercing empty string to `0`.
@@ -41,8 +42,19 @@ const EditProduct = ({ id }: { id: string }) => {
     },
   });
 
+  if (productQuery.isError)
+    return (
+      <Card className="max-w-4xl mx-auto p-4">
+        <Badge color="red">Error loading product</Badge>
+      </Card>
+    );
+
   return (
-    <div className="flex justify-center p-6 bg-gray-50 min-h-screen">
+    <div
+      className={clsx("flex justify-center p-6 bg-gray-50 min-h-screen", {
+        "opacity-50": productQuery.isLoading,
+      })}
+    >
       <Card className="w-full max-w-2xl! shadow-md">
         <h1 className="text-2xl font-semibold text-gray-800 mb-4">
           Edit Product
