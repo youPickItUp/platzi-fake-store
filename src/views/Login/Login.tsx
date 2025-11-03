@@ -57,7 +57,7 @@ const Login = () => {
           </form.Field>
           <form.Subscribe selector={(state) => state.isSubmitting}>
             {(isSubmitting) => (
-              <Button type="submit">
+              <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? "Loading" : "Submit"}
               </Button>
             )}

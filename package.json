@@ -23,6 +23,7 @@
     "flowbite-react": "^0.12.10",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "simple-notify": "^1.0.6",
     "tsafe": "^1.8.12",
     "wouter": "^3.7.1",
     "zod": "^4.1.12"

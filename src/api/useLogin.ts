@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import fakeStoreApi, { accessTokenKey } from "./fakeStoreApi";
 import z from "zod";
 import { useLocation } from "wouter";
+import Notify from "simple-notify";
 
 const tokensSchema = z
   .object({
@@ -23,7 +24,27 @@ const useLogin = () => {
     },
     onSuccess: ({ accessToken }) => {
       localStorage.setItem(accessTokenKey, accessToken);
+      new Notify({
+        status: "success",
+        title: "Login successful!",
+        effect: "fade",
+        speed: 300,
+        showCloseButton: true,
+        autoclose: true,
+        autotimeout: 5000,
+      });
       navigate("/");
+    },
+    onError: () => {
+      new Notify({
+        status: "error",
+        title: "Login failed!",
+        effect: "fade",
+        speed: 300,
+        showCloseButton: true,
+        autoclose: true,
+        autotimeout: 5000,
+      });
     },
   });
 };
