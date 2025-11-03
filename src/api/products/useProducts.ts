@@ -76,6 +76,7 @@ const useProducts = ({
         hasNextPage: nthPageProductsAndOne.length === productsPageCount + 1,
       };
     },
+    placeholderData: (previousData) => previousData,
   });
 };
 

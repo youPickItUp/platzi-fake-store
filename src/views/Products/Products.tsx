@@ -15,6 +15,7 @@ import {
 } from "flowbite-react";
 import { Label, Select, TextInput } from "flowbite-react";
 import Title from "./Title";
+import clsx from "clsx";
 
 const Products = () => {
   const [location, navigate] = useLocation();
@@ -179,7 +180,12 @@ const Products = () => {
               </TableHeadCell>
             </TableRow>
           </TableHead>
-          <TableBody className="divide-y" data-testid="tableBodyId">
+          <TableBody
+            className={clsx("divide-y", {
+              "opacity-50": productsQuery.isPlaceholderData,
+            })}
+            data-testid="tableBodyId"
+          >
             {productsQuery.data?.products.map(
               ({ id, title, price, category }) => (
                 <TableRow
@@ -250,7 +256,9 @@ const Products = () => {
           {productsQuery.data?.products.map(
             ({ id, title, price, category, images }) => (
               <Card
-                className="max-w-sm"
+                className={clsx("max-w-sm", {
+                  "opacity-50": productsQuery.isPlaceholderData,
+                })}
                 imgAlt="Product image"
                 imgSrc={images[0]}
               >
@@ -294,9 +302,12 @@ const Products = () => {
             ),
           )}
         </div>
+        {productsQuery.isError && (
+          <Badge color="red">"Error occurred when fetching data."</Badge>
+        )}
         <div className="flex justify-center lg:justify-start! gap-x-2">
           <Button
-            disabled={page === 0}
+            disabled={page === 0 || productsQuery.isPlaceholderData}
             onClick={() =>
               onSearchChange({ page: page === 1 ? "" : (page - 1).toString() })
             }
@@ -304,7 +315,10 @@ const Products = () => {
             Prev
           </Button>
           <Button
-            disabled={!productsQuery.data?.hasNextPage}
+            disabled={
+              !productsQuery.data?.hasNextPage ||
+              productsQuery.isPlaceholderData
+            }
             onClick={() => onSearchChange({ page: (page + 1).toString() })}
           >
             Next
