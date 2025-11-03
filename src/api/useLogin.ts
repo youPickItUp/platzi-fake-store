@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import fakeStoreApi from "./fakeStoreApi";
+import fakeStoreApi, { accessTokenKey } from "./fakeStoreApi";
 import z from "zod";
 import { useLocation } from "wouter";
 
@@ -22,8 +22,7 @@ const useLogin = () => {
       return tokensSchema.parse(response.data);
     },
     onSuccess: ({ accessToken }) => {
-      fakeStoreApi.defaults.headers.common[`Authorization`] =
-        `Bearer ${accessToken}`;
+      localStorage.setItem(accessTokenKey, accessToken);
       navigate("/");
     },
   });
