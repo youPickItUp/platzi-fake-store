@@ -1,7 +1,9 @@
-import { Badge, Card, Carousel } from "flowbite-react";
+import { Badge, Button, Card, Carousel } from "flowbite-react";
 import { useProduct } from "../../api";
+import { useLocation } from "wouter";
 
 const Product = ({ id }: { id: string }) => {
+  const [, navigate] = useLocation();
   const { data: product } = useProduct(id);
 
   if (!product) return "Loading";
@@ -41,6 +43,7 @@ const Product = ({ id }: { id: string }) => {
               </p>
             </div>
           </div>
+          <Button onClick={() => navigate(`/products/${id}/edit`)}>Edit</Button>
         </div>
       </Card>
     </div>

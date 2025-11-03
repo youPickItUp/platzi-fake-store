@@ -3,8 +3,8 @@ import fakeStoreApi from "../fakeStoreApi";
 
 const useAddProduct = () => {
   return useMutation({
-    mutationFn: async (data: unknown) => {
-      await fakeStoreApi.post("/products/", data);
+    mutationFn: (data: unknown) => {
+      return fakeStoreApi.post("/products/", data);
     },
   });
 };
