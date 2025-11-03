@@ -219,7 +219,7 @@ const Products = () => {
             )}
           </TableBody>
         </Table>
-        <div className="lg:hidden flex flex-col gap-4">
+        <div className="lg:hidden flex flex-col gap-4 items-center">
           <div className="flex flex-row gap-x-4">
             <button
               type="button"

@@ -41,7 +41,7 @@ const AddProduct = () => {
 
   return (
     <div className="flex justify-center p-6 bg-gray-50 min-h-screen">
-      <Card className="w-full max-w-2xl shadow-lg">
+      <Card className="w-full max-w-2xl! shadow-lg">
         <h1 className="text-2xl font-semibold text-gray-800 mb-4">
           Add Product
         </h1>
@@ -58,7 +58,7 @@ const AddProduct = () => {
           <form.Field name="title">
             {(field) => (
               <div>
-                <Label htmlFor={field.name} />
+                <Label htmlFor={field.name}>Title</Label>
                 <TextInput
                   id={field.name}
                   placeholder="Product title"
@@ -75,7 +75,7 @@ const AddProduct = () => {
           <form.Field name="price">
             {(field) => (
               <div>
-                <Label htmlFor={field.name} />
+                <Label htmlFor={field.name}>Price</Label>
                 <TextInput
                   id={field.name}
                   type="number"
@@ -93,7 +93,7 @@ const AddProduct = () => {
           <form.Field name="description">
             {(field) => (
               <div>
-                <Label htmlFor={field.name} />
+                <Label htmlFor={field.name}>Description</Label>
                 <TextInput
                   id={field.name}
                   placeholder="Short product description"
@@ -109,7 +109,7 @@ const AddProduct = () => {
           <form.Field name="images" mode="array">
             {(field) => (
               <div>
-                <Label htmlFor={field.name} />
+                <Label htmlFor={field.name}>Images urls:</Label>
                 <div className="space-y-3">
                   {field.state.value.map((_, i) => (
                     <form.Field key={i} name={`images[${i}]`}>
