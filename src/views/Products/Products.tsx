@@ -94,6 +94,7 @@ const Products = () => {
                   onChange={(e) =>
                     onSearchChange({ categoryId: e.target.value })
                   }
+                  className="flex-1"
                   sizing="sm"
                 >
                   <option value=""></option>
@@ -116,6 +117,7 @@ const Products = () => {
                   value={filterParams.priceMin}
                   onChange={(e) => onSearchChange({ priceMin: e.target.value })}
                   sizing="sm"
+                  className="flex-1"
                 ></TextInput>
               </div>
               <div className="flex gap-x-2 items-center">
@@ -128,6 +130,7 @@ const Products = () => {
                   value={filterParams.priceMax}
                   onChange={(e) => onSearchChange({ priceMax: e.target.value })}
                   sizing="sm"
+                  className="flex-1"
                 ></TextInput>
               </div>
             </div>
@@ -140,7 +143,7 @@ const Products = () => {
           Create new product
         </Link>
       </div>
-      <Card className="overflow-x-auto my-5 items-center">
+      <Card className="overflow-x-auto my-5 items-center lg:items-stretch!">
         <Table hoverable className="hidden lg:table!">
           <TableHead>
             <TableRow>

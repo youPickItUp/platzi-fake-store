@@ -36,6 +36,7 @@ const Title = ({
             nextValue,
           );
         }}
+        className="flex-1"
         sizing="sm"
       ></TextInput>
     </div>
