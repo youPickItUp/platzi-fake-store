@@ -79,7 +79,7 @@ const Products = () => {
       <div className="flex flex-row justify-between flex-wrap gap-4">
         <div className="flex max-w-md flex-col gap-4">
           <Card>
-            <div className="flex gap-x-4">
+            <div className="flex gap-4 flex-col lg:flex-row">
               <Title
                 initialValue={filterParams.title}
                 onChange={(nextValue) => onSearchChange({ title: nextValue })}
@@ -105,7 +105,7 @@ const Products = () => {
                 </Select>
               </div>
             </div>
-            <div className="flex gap-x-4">
+            <div className="flex gap-4 flex-col lg:flex-row">
               <div className="flex gap-x-2 items-center">
                 <Label className="shrink-0" htmlFor="priceMin">
                   Price min:
@@ -141,7 +141,7 @@ const Products = () => {
         </Link>
       </div>
       <Card className="overflow-x-auto my-5 items-center">
-        <Table hoverable className="hidden lg:block">
+        <Table hoverable className="hidden lg:table!">
           <TableHead>
             <TableRow>
               <TableHeadCell>
@@ -291,7 +291,7 @@ const Products = () => {
             ),
           )}
         </div>
-        <div className="flex justify-center lg:justify-start gap-x-2">
+        <div className="flex justify-center lg:justify-start! gap-x-2">
           <Button
             disabled={page === 0}
             onClick={() =>
